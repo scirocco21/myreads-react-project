@@ -21,6 +21,13 @@ class BooksApp extends React.Component {
     getAll().then(books => this.setState({books: books}))
   }
 
+  changeShelf = (e, id) => {
+    const books = this.state.books.map(book => {
+      return book.id === id ? { ...book, shelf: e.target.value } : book;
+    });
+    this.setState({ books });
+  }
+
   render() {
     const read = this.state.books.filter(book => book.shelf === "read")
     const currentlyReading = this.state.books.filter(book => book.shelf === "currentlyReading")
@@ -56,9 +63,9 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <CurrentlyReading books={currentlyReading} />
-                <Read books={read} />
-                <WantToRead books={wantToRead} />
+                <CurrentlyReading books={currentlyReading} changeShelf={this.changeShelf}/>
+                <Read books={read} changeShelf={this.changeShelf} />
+                <WantToRead books={wantToRead} changeShelf={this.changeShelf}/>
               </div>
             </div>
             <div className="open-search">
