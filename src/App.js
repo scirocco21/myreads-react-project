@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import BookshelfContainer from './Components/BookshelfContainer'
 import SearchPage from './Components/SearchPage'
-import { getAll, get, update } from './BooksAPI'
+import { getAll, update } from './BooksAPI'
 import {Switch, BrowserRouter as Router, Route} from 'react-router-dom';
 import './App.css'
 
