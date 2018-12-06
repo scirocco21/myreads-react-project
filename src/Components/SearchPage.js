@@ -18,8 +18,9 @@ class SearchPage extends Component {
       })
     } else {
       this.setState({
+        errorMessage: "",
         results: response,
-        errorMessage: ""
+
       })
     }
   }
