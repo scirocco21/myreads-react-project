@@ -3,7 +3,7 @@ import Book from './Book'
 
 class WantToRead extends Component {
   render() {
-    const bookList = this.props.books.map(book => <li><Book book={book} /></li>)
+    const bookList = this.props.books.map(book => <li key={book.id}><Book book={book} changeShelf={this.props.changeShelf} /></li>)
 
     return (
 
