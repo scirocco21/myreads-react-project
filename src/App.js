@@ -1,19 +1,12 @@
-import React from 'react'
-import CurrentlyReading from './Components/CurrentlyReading'
-import Read from './Components/Read'
-import WantToRead from './Components/WantToRead'
-import { getAll } from './BooksAPI'
+import React, {Component} from 'react'
+import BookshelfContainer from './Components/BookshelfContainer'
+import SearchPage from './Components/SearchPage'
+import { getAll, get, update } from './BooksAPI'
+import {Switch, BrowserRouter as Router, Route} from 'react-router-dom';
 import './App.css'
 
-class BooksApp extends React.Component {
+class BooksApp extends Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false,
     books: []
   }
 
@@ -21,58 +14,32 @@ class BooksApp extends React.Component {
     getAll().then(books => this.setState({books: books}))
   }
 
-  changeShelf = (e, id) => {
-    const books = this.state.books.map(book => {
-      return book.id === id ? { ...book, shelf: e.target.value } : book;
-    });
-    this.setState({ books });
+  changeShelf = (e, book) => {
+    // either update the book if it's already in the state or add it to the state if it isn't
+    let shelf = e.target.value;
+    let bookId = book.id
+
+    if (this.state.books.includes(book)) {
+      const books = this.state.books.map(book => {
+      return book.id === bookId ? { ...book, shelf: shelf } : book
+      })
+      this.setState({ books });
+    } else {
+      const books = this.state.books.concat({...book, shelf: shelf})
+      this.setState({ books });
+    }
+    update(book, shelf)
   }
 
   render() {
-    const read = this.state.books.filter(book => book.shelf === "read")
-    const currentlyReading = this.state.books.filter(book => book.shelf === "currentlyReading")
-    const wantToRead = this.state.books.filter(book => book.shelf === "wantToRead")
-
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
-
-              </div>
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
-          </div>
-        ) : (
-          <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
-            <div className="list-books-content">
-              <div>
-                <CurrentlyReading books={currentlyReading} changeShelf={this.changeShelf}/>
-                <Read books={read} changeShelf={this.changeShelf} />
-                <WantToRead books={wantToRead} changeShelf={this.changeShelf}/>
-              </div>
-            </div>
-            <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
-            </div>
-          </div>
-        )}
+        <Router>
+          <Switch>
+            <Route exact path='/' render={(props) => (<BookshelfContainer {...props} changeShelf={this.changeShelf} books={this.state.books}/>)} />
+            <Route exact path='/search' render={(props) => (<SearchPage {...props} changeShelf={this.changeShelf} />)} />
+          </Switch>
+        </Router>
       </div>
     )
   }
