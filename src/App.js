@@ -15,18 +15,17 @@ class BooksApp extends Component {
   }
 
   changeShelf = (e, book) => {
-    // either update the book if it's already in the state or add it to the state if it isn't
     let shelf = e.target.value;
     let bookId = book.id
-
-    if (this.state.books.includes(book)) {
+    // either update the book if it's already in the state or add it to the state if it isn't
+    if (this.state.books.some( book => book.id === bookId)) {
       const books = this.state.books.map(book => {
       return book.id === bookId ? { ...book, shelf: shelf } : book
       })
       this.setState({ books });
     } else {
-      const books = this.state.books.concat({...book, shelf: shelf})
-      this.setState({ books });
+    // state is not manipulated directly because concat creates copy of array and setState is invoked
+      this.setState({ books: this.state.books.concat({...book, shelf: shelf}) });
     }
     update(book, shelf)
   }
@@ -37,7 +36,7 @@ class BooksApp extends Component {
         <Router>
           <Switch>
             <Route exact path='/' render={(props) => (<BookshelfContainer {...props} changeShelf={this.changeShelf} books={this.state.books}/>)} />
-            <Route exact path='/search' render={(props) => (<SearchPage {...props} changeShelf={this.changeShelf} />)} />
+            <Route exact path='/search' render={(props) => (<SearchPage {...props} changeShelf={this.changeShelf} books={this.state.books} />)} />
           </Switch>
         </Router>
       </div>
