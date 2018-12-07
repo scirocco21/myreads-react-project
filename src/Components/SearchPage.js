@@ -17,10 +17,18 @@ class SearchPage extends Component {
         results: ""
       })
     } else {
+      let books = []
+      response.forEach( result => {
+        if (this.props.books.some( book => book.id === result.id)) {
+          let match = this.props.books.filter(book => book.id === result.id);
+          books.push({...result, shelf: match[0].shelf});
+        } else {
+          books.push({...result, shelf: "none"})
+        }
+      })
       this.setState({
         errorMessage: "",
-        results: response,
-
+        results: books
       })
     }
   }
@@ -29,7 +37,6 @@ class SearchPage extends Component {
     this.setState( {query: query});
     search(query).then(response => this.handleResponse(response))
   }
-
 
   render() {
     let books;
