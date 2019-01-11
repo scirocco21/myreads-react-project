@@ -8,14 +8,14 @@ render() {
 
   return (
 
-    <div className="bookshelf">
+    <section className="bookshelf" id="current">
       <h2 className="bookshelf-title">Currently Reading</h2>
       <div className="bookshelf-books">
         <ol className="books-grid">
           {bookList}
         </ol>
       </div>
-    </div>
+    </section>
     )
   }
 }
